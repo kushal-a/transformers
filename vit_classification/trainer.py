@@ -52,7 +52,7 @@ class Trainer:
         # TODO - Compute cross entropy loss between predictions and labels. 
         loss_fn = torch.nn.CrossEntropyLoss()
         loss = loss_fn(predictions, labels)
-        
+
         return loss
 
     def train(self):
@@ -76,7 +76,7 @@ class Trainer:
                 
             self.loss_history.append(epoch_loss/num_batches)
             self.scheduler.step()
-
+            
             if self.verbose and i % self.print_every == 0:
                 print( "(epoch %d / %d) loss: %f" % (i , self.num_epochs, self.loss_history[-1]))
                 

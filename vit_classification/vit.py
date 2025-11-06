@@ -98,13 +98,13 @@ class ViT(nn.Module):
         output = torch.cat([class_tokens,patches_embedded],dim=1) # TODO (append a CLS token to the beginning of the sequence of patch embeddings)
 
         output = self.positional_encoding(output)
-        mask = torch.zeros(images.shape[0],self.num_patches,self.num_patches).to(self.device) # TODO (generate a mask and feed it to the self-attention layer in ViT)
-
+        mask = torch.ones(output.shape[1],output.shape[1]).to(self.device) # TODO (generate a mask and feed it to the self-attention layer in ViT)
+        
         for layer in self.layers:
             output = layer(output, mask)
 
         output = self.fc(output[:,0,:]) # TODO (take the embedding corresponding to the [CLS] token and feed it through a linear layer to obtain the logits for each class)
-
+        
         return output
 
     def _init_weights(self, module):
