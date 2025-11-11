@@ -1,2 +1,3 @@
 transformer_captioning/datasets/
 vit_classification/checkpoints/
+vit_classification/data/
