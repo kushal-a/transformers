@@ -7,7 +7,7 @@ from transformer import TransformerDecoder
 from matplotlib import pyplot as plt
 
 set_all_seeds(42) ### DO NOT CHANGE THIS LINE
-exp_name = 'case3'
+exp_name = 'swiglu'
 
 train_dataset = CocoDataset(load_coco_data(max_train=1024), 'train')
 train_dataloader =  DataLoader(train_dataset, batch_size=64)
@@ -30,7 +30,7 @@ transformer = TransformerDecoder(
 
 trainer = Trainer(transformer, train_dataloader, val_dataloader,
           num_epochs=100,
-          learning_rate=1e-3,
+          learning_rate=1e-4,
           device = device
         )
 

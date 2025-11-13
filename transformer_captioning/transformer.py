@@ -6,6 +6,24 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+class SwiGLU(nn.Module):
+    def __init__(self, input_dim=None, hidden_dim=None):
+        super().__init__()
+
+        self.filter = nn.Linear(input_dim, hidden_dim)
+        self.input_proj = nn.Linear(input_dim, hidden_dim)
+        self.output_proj = nn.Linear(hidden_dim, input_dim)
+
+    def forward(self, x):
+        filter = self.filter(x)
+        input = self.input_proj(x)
+
+        out = F.silu(filter) * input
+
+        out = self.output_proj(out)
+
+        return out
+    
 class AttentionLayer(nn.Module):
 
     def __init__(self, embed_dim, dropout=0.1):
@@ -155,7 +173,8 @@ class FeedForwardBlock(nn.Module):
         # MLP has the following layers : linear, relu, dropout, linear ; hidden dim of linear is given by dim_feedforward
         self.mlp = nn.Sequential(
             nn.Linear(input_dim, dim_feedforward),
-            nn.ReLU(),
+            # nn.ReLU(),
+            SwiGLU(dim_feedforward, dim_feedforward),
             nn.Dropout(dropout),
             nn.Linear(dim_feedforward, input_dim)
         )
