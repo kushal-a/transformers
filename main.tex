@@ -351,16 +351,17 @@ From case 1 to case 2, we can see that increasing heads and layers improved perf
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.32\linewidth}
-        \includegraphics[width=\linewidth]{example-image}
+        \includegraphics[width=\linewidth]{transformer_captioning/plots/swiglu_loss_out.png}
         \caption{Sample: SwiGLU training}
     \end{subfigure}
 \end{figure}
 
 \begin{solution}
 \\ 
-Training Loss: 0.014040
+Training Loss: 0.014040\\
 % YOU ANSWER HERE
-The loss function used is cross-entropy. 
+The loss function used is cross-entropy. \\
+SwiGLU produced longer captions than the previous case. It was better at sentences without repeating words. The error produced at training was somewhere between case 2 and 3 from the previous case. The samples showed similar effect. They were better than case 2, being better structured. Case 3 had shorter captions but was more accurate. SwiGLU performed somewhere in between. This could be because the SwiGLU adds more layers to the model, giving it more space to learn on the data. 
 \end{solution}
 
 \end{questions}
