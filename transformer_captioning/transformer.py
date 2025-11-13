@@ -14,9 +14,9 @@ class AttentionLayer(nn.Module):
         self.embed_dim = embed_dim
         # TODO: Initialize the following layers and parameters to perform attention
         # This class assumes that the input dimension for query, key and value is embed_dim
-        self.query_proj = nn.Linear(embed_dim, embed_dim, bias=False)
-        self.key_proj = nn.Linear(embed_dim, embed_dim, bias=False)
-        self.value_proj = nn.Linear(embed_dim, embed_dim, bias=False)
+        self.query_proj = nn.Linear(embed_dim, embed_dim)
+        self.key_proj = nn.Linear(embed_dim, embed_dim)
+        self.value_proj = nn.Linear(embed_dim, embed_dim)
 
         self.dropout = nn.Dropout(dropout)
     def forward(self, query, key, value, attn_mask=None):
@@ -33,7 +33,7 @@ class AttentionLayer(nn.Module):
 
         #compute dot-product attention. Don't forget the scaling value!
         #Expected shape of dot_product is (N, S, T)
-        dot_product = torch.bmm(query, key.transpose(-1,-2))
+        dot_product = query @ key.transpose(-1,-2)
 
         if attn_mask is not None:
             # convert att_mask which is multiplicative, to an additive mask
@@ -54,7 +54,7 @@ class MultiHeadAttentionLayer(AttentionLayer):
         self.num_heads = num_heads
 
         # TODO: Initialize the following layers and parameters to perform attention
-        self.head_proj = nn.Linear(embed_dim, embed_dim, bias=False)
+        self.head_proj = nn.Linear(embed_dim, embed_dim)
 
     def forward(self, query, key, value, attn_mask=None):
         H = self.num_heads
@@ -73,8 +73,8 @@ class MultiHeadAttentionLayer(AttentionLayer):
 
         #compute dot-product attention separately for each head. Don't forget the scaling value!
         #Expected shape of dot_product is (N, H, S, T)
-        dot_product = query.unsqueeze(-2) * key.unsqueeze(-3) # (N,H,S,1,D//H) x (N,H,1,T,D//H) = (N,H,S,T,D//H)
-        dot_product = dot_product.sum(-1) # (N,H,S,T)
+        dot_product = query @ key.transpose(-1,-2)
+
 
         if attn_mask is not None:
             # convert att_mask which is multiplicative, to an additive mask
@@ -85,15 +85,14 @@ class MultiHeadAttentionLayer(AttentionLayer):
         
         # apply softmax, dropout, and use value
         # (N,H,S,T,1) x (N,H,1,T,D//H) = (N,H,S,T,D//H)
-        y = dot_product/torch.sqrt(torch.tensor(D//H))
+        dot_product = dot_product/torch.sqrt(torch.tensor(D//H))
         y = F.softmax(dot_product, dim=-1)
-        y = self.dropout(y).unsqueeze(-1)
-        y = y * value.unsqueeze(2)
-        y = y.sum(-2) # (N,H,S,D//H)
+        y = y @ value
+        y = self.dropout(y)
+
         # concat embeddings from different heads, and project
         output = y.transpose(1,2).reshape(N,S,D)
         return self.head_proj(output)
-
 
 class PositionalEncoding(nn.Module):
     def __init__(self, embed_dim, dropout=0.1, max_len=5000):
@@ -107,10 +106,9 @@ class PositionalEncoding(nn.Module):
         # TODO - add the encoding to x
 
         enc = self.encoding(torch.arange(S, device=x.device))
-        enc = self.dropout(enc)
-        output = x + enc.unsqueeze(0)
+        enc = self.dropout(x + enc)
    
-        return output
+        return enc
 
 
 class SelfAttentionBlock(nn.Module):
