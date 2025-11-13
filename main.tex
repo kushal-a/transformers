@@ -300,9 +300,9 @@ We will be implementing the different pieces of a Transformer decoder (\href{htt
 \begin{questions}
 \question Paste training loss plots for each of the three hyper-param configs
 \\
-2-heads-2-layers-lr-1e-4: \textbf{TODO: fill in final train loss here.} \\
-4-heads-6-layers-lr-1e-4: \textbf{TODO: fill in final train loss here.} \\
-4-heads-6-layers-lr-1e-3: \textbf{TODO: fill in final train loss here.} 
+2-heads-2-layers-lr-1e-4: \textbf{0.047525} \\
+4-heads-6-layers-lr-1e-4: \textbf{0.025231} \\
+4-heads-6-layers-lr-1e-3: \textbf{0.000377} 
 \begin{figure}[H]
     \centering
     % TODO: put your plot here.
@@ -343,6 +343,7 @@ We will be implementing the different pieces of a Transformer decoder (\href{htt
 \begin{solution}
 \\ 
 % YOU ANSWER HERE
+From case 1 to case 2, we can see that increasing heads and layers improved performance. So I would increase the number of heads and layers. Further from case 2 to case 3, although the loss goes down, the predictions themselves are not that good. So I would maintain a learning rate of 1e-3. More generally, the model is very shallow to incorporate the intricacies of sentences. Increasing the model size would improve performance.
 \end{solution}
 
 \item Experiment by replacing the activations in your transformer implementation with more modern activations such as SwiGLU. Paste the training loss plot below. Then describe the loss function used and performance changes observed.
@@ -357,7 +358,9 @@ We will be implementing the different pieces of a Transformer decoder (\href{htt
 
 \begin{solution}
 \\ 
+Training Loss: 0.014040
 % YOU ANSWER HERE
+The loss function used is cross-entropy. 
 \end{solution}
 
 \end{questions}
